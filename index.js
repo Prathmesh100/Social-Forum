@@ -1,6 +1,7 @@
 //app create
 const express= require('express');
 const app = express();
+const cookieParser= require("cookie-parser");
 
 //PORT defined
 require("dotenv").config();
@@ -10,6 +11,7 @@ const PORT= process.env.PORT || 4000;
 const bodyParser=require("body-parser");
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cookieParser());
 
 //For temporary storing of file till its is uploading in cloudinary
 const FileUpload=require("express-fileupload");
