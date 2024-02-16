@@ -46,13 +46,6 @@ app.use(
 // app.use("/",routes);
 
 
-  
-
-app.use(express.static('static'))
-
-app.get('/*', (req, res) => {
-    res.sendFile('static/index.html');
-  })
 
 app.get("/",(req,res)=>{
     res.header('Access-Control-Allow-Origin', '*');
