@@ -13,8 +13,8 @@ app.use(express.json());
 
 //For temporary storing of file till its is uploading in cloudinary
 const FileUpload=require("express-fileupload");
-app.use(FileUpload({ 
-    useTempFiles: true, 
+app.use(FileUpload({
+    useTempFiles: true,
     tempFileDir: '/tmp/'
 })); 
 
@@ -26,7 +26,7 @@ dbConnect();
 const cloudinary=require("./config/cloudinary");
 cloudinary.cloudinaryConnect();
 
-// //api route mount
+//api route mount
 const routes= require("./router/routes");
 
 // Enable CORS
@@ -47,11 +47,12 @@ app.use("/",routes);
 
 
   
+
 app.get("/",(req,res)=>{
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-MEthods', 'POST,GET,OPTIONS,PUT,DELETE');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');       ;
-    res.send({ "msg": "Your server is up and running....." })
+    res.send({ "msg": `App is listening on ${PORT}` })
     })
 
 
@@ -59,4 +60,4 @@ app.get("/",(req,res)=>{
 app.listen(PORT,()=>
 {
     console.log(`App is listening on ${PORT}`)
-});
+});  
