@@ -1,0 +1,212 @@
+const resource = require("../models/Resourses");
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const { uploadPDFToCloudinary } = require("../utils/pdfUploader");
+
+require("dotenv").config();
+
+// function to create a new resource
+
+exports.createResource = async (req,res)=>{
+    try{
+        let {title} =req.body;
+        const file = req.files.resourceFile;
+        // check if any of requird fields are missing
+        if(!title || !file) 
+        {
+            return res.status(400).json({
+                success:false,
+                message: "All fields are required"
+            });
+        }
+
+        console.log("all fields are required complete");
+        const fileType = file?.name.split('.')[1];
+        let resourceData = null;
+        if(fileType==="pdf"){
+            resourceData= await uploadPDFToCloudinary(
+                file,
+                process.env.FOLDER_NAME
+            );
+                // console.log("pdf upload", resourceData);
+        }
+        else{
+            resourceData= await uploadImageToCloudinary(
+                file,
+                process.env.FOLDER_NAME
+            );
+                // console.log("image upload", resourceData);
+        }
+
+        // create a new Resource object with given data
+        const newResource= await resource.create({
+            title,
+            resourseUrl: resourceData?.secure_url,
+
+        });
+
+        // Return the response
+		res.status(200).json({
+			success: true,
+			data: newResource,
+			message: "Resource data inserted in DB Successfully",
+		});
+ 
+
+    }  
+    catch (error) {
+		// Handle any errors that occur during the creation of gallery image
+		console.error(error);
+		res.status(500).json({
+			success: false,
+			message: "Failed to insert Resource in DB",
+			error: error.message,
+		});
+	}
+}
+
+
+// for updating resources data
+exports.updateResources = async (req, res) => {
+    try{
+        // extracting resource id and information from request body
+        const {resourceId,title} = req.body;
+        if(!resourceId)
+        {   
+            return res.status(400).json({
+                success: false,
+                message: "Resource ID required",
+            })
+        }
+        console.log("going to check if resource")
+         // Check if resource exists
+         const isResource = await resource.findById(resourceId);
+         if (!isResource) {
+            return res.status(404).json({
+                success: false,
+                message: "Resource not found"
+            });
+        } 
+        // Check if file is uploaded
+        if (!req.files || !req.files.resourceFile) {
+            // No file uploaded, update only the title
+            const updatedResource = await resource.findByIdAndUpdate(resourceId, {
+                title: title || isResource?.title,
+            }, { new: true });
+
+            return res.status(200).json({
+                success: true,
+                data: updatedResource,
+                message: "Resource title Updated in DB Successfully",
+            });
+        }
+
+        const file = req.files.resourceFile;
+        console.log("file read")
+        let resourceData = null;
+        if(file){
+            const fileType = file?.name.split('.')[1];
+            if(fileType==="pdf"){
+                resourceData= await uploadPDFToCloudinary(
+                    file,
+                    process.env.FOLDER_NAME
+                );
+                    // console.log("pdf upload", resourceData);
+            }
+            else{
+                resourceData= await uploadImageToCloudinary(
+                    file,
+                    process.env.FOLDER_NAME
+                );
+                    // console.log("image upload", resourceData);
+            }
+        }
+
+        // update the resource with necessary information
+        const updatedResource= await resource.findByIdAndUpdate({_id:resourceId},{
+            title: title || isResource?.title,
+            resourseUrl: resourceData?.secure_url || isResource?.resourceUrl
+
+        },{new: true});
+ 
+        
+        res.status(200).json({
+			success: true,
+			data: updatedResource, 
+			message: "Resource data Updated in DB Successfully",
+		});
+
+    }
+    catch (error) {
+        // Handle any errors that occur during the creation of gallery image
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update Resource in DB",
+            error: error.message,
+        });
+    }
+}
+
+// for deleting resources data
+exports.deleteResource = async (req,res)=>{
+  try{
+        // extracting resource id and information from request body
+        const {resourceId} = req.body;
+        console.log(req.body)
+        if(!resourceId)
+        {   
+            return res.status(400).json({
+                success: false,
+                message: "Resource ID required",
+            })
+        }
+        console.log("going to check if resource")
+         // Check if resource exists
+         const ifResource = await resource.findById(resourceId);
+         if (!ifResource) {
+            return res.status(404).json({
+                success: false,
+                message: "Resource not found"
+            });
+        } 
+        
+        await resource.findByIdAndDelete({_id:resourceId});
+        res.status(200).json({
+			success: true,
+			message: "Resource data deleted in DB Successfully",
+		});
+
+    }
+    catch (error) {
+    // Handle any errors that occur during the creation of gallery image
+    console.error(error);
+    res.status(500).json({
+        success: false,
+        message: "Failed to update Resource in DB",
+        error: error.message,
+        });
+    }
+}
+
+// for getting resources data
+exports.getResource = async (req,res)=>{
+    try{
+        const allResources = await resource.find({},
+			{
+				title: true,
+                resourseUrl:true,
+			})
+            return res.status(200).json({
+                success: true,
+                data: allResources,
+            });
+    }
+    catch (error) {
+        console.log(error);
+		return res.status(404).json({
+			success: false,
+			message: `Can't Fetch Resource Data`,
+			error: error.message,
+		});
+    }
+}

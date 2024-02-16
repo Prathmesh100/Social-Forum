@@ -14,7 +14,7 @@ app.use(express.json());
 //For temporary storing of file till its is uploading in cloudinary
 const FileUpload=require("express-fileupload");
 app.use(FileUpload({ 
-    useTempFiles: true,
+    useTempFiles: true, 
     tempFileDir: '/tmp/'
 })); 
 
@@ -27,7 +27,7 @@ const cloudinary=require("./config/cloudinary");
 cloudinary.cloudinaryConnect();
 
 // //api route mount
-// const routes= require("./router/routes");
+const routes= require("./router/routes");
 
 // Enable CORS
 
@@ -43,10 +43,10 @@ app.use(
 
 
 
-// app.use("/",routes);
+app.use("/",routes);
 
 
-
+  
 app.get("/",(req,res)=>{
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-MEthods', 'POST,GET,OPTIONS,PUT,DELETE');
