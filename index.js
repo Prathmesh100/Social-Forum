@@ -1,33 +1,69 @@
-const express = require('express');
+//app create
+const express= require('express');
 const app = express();
 
-require('dotenv').config();
-
-const database= require("./config/database");
-const {cloudnairyconnect}=require("./config/cloudinary");
-const fileUpload= require("express-fileupload");
-
+//PORT defined
+require("dotenv").config();
 const PORT= process.env.PORT || 4000;
 
-database.connect();
+//Middleware
+const bodyParser=require("body-parser");
+app.use(bodyParser.json());
+app.use(express.json());
 
+//For temporary storing of file till its is uploading in cloudinary
+const FileUpload=require("express-fileupload");
+app.use(FileUpload({ 
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
+})); 
+
+//db connect
+const dbConnect= require('./config/database');
+dbConnect();
+
+//cloudConnect
+const cloudinary=require("./config/cloudinary");
+cloudinary.cloudinaryConnect();
+
+// //api route mount
+// const routes= require("./router/routes");
+
+// Enable CORS
+
+const cors = require("cors");
 app.use(
-    fileUpload({
-        useTempFiles:true,
-        tempFileDir:'/tmp',
+    cors({
+        origin: '*',
+        credentials:true,
+        optionSuccessStatus:200,
+
     })
 )
 
-//cloudinary connection
-cloudnairyconnect();
+
+
+// app.use("/",routes);
+
+
+  
+
+app.use(express.static('static'))
+
+app.get('/*', (req, res) => {
+    res.sendFile('static/index.html');
+  })
 
 app.get("/",(req,res)=>{
-    return res.json({
-        success:true,
-        message:"Your server is up and running....."
-    });
-})
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-MEthods', 'POST,GET,OPTIONS,PUT,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');       ;
+    res.send({ "msg": "Your server is up and running....." })
+    })
 
-app.listen(PORT,()=>{
-    console.log(`app running at ${PORT}`)
-})
+
+//activation server
+app.listen(PORT,()=>
+{
+    console.log(`App is listening on ${PORT}`)
+});
