@@ -25,7 +25,7 @@ router.get("/getResource", getResource);
 router.post("/createQuiz", auth,isDemo, createQuiz);
 router.put("/updateQuiz", auth,isDemo, updateQuiz);
 router.delete("/deleteQuiz", auth,isDemo, deleteQuiz);
-router.get("/getQuiz",  getQuiz);
+router.get("/getQuiz",  getQuiz);                   
 
 router.post("/createBlog", auth,isDemo, createBlog); 
 router.put("/updateBlog", auth,isDemo, updateBlog);
