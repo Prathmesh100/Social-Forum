@@ -14,15 +14,9 @@ const quizSchema = new mongoose.Schema(
           },
           correctAnswer: {
             type: String,
-            required: true
+            required: true,
           },
-        // // Defined the user added this to the quiz
-        // user:{
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     required: true,
-        //     ref: "user",
-        // }
-		
+       
 		// Add timestamps for when the document is created and last modified
 	},
 	{ timestamps: true }

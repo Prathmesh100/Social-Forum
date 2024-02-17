@@ -3,30 +3,74 @@ const express = require("express")
 const router = express.Router()
 
 const {isDemo}=require("../middlewares/demo");
-const { auth } = require("../middlewares/auth")
-
+const { auth, isSuperAdmin } = require("../middlewares/auth")
+const {resetPasswordToken,resetPassword} = require("../controllers/ResetPassword")
 // Import the Controllers
 
 const {createResource,updateResources,deleteResource,getResource}= require("../controllers/Resourses")
 const {createQuiz,updateQuiz,deleteQuiz,getQuiz} = require("../controllers/Quiz");
 const {createBlog,updateBlog,deleteBlog,getBlog}= require("../controllers/Blogs");
-const {signup,login} = require("../controllers/Auth")
+const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser} = require("../controllers/Auth")
 
+
+// ********************************************************************************************************
+//                                      Authentication routes
+// ********************************************************************************************************
 router.post("/login",login)
 router.post("/signup",signup)
 
+// Route for getting User information
+router.get("/getUserDetails",auth,isDemo, getUserDetails)
+// Route for updating user details
+router.post("/updateUserDetails",auth,isDemo,updateUserDetails)
+
+// ********************************************************************************************************
+//                                      Reset Password routes
+// ********************************************************************************************************
+
+// Route for generating a reset password token
+router.post("/reset-password-token", resetPasswordToken)
+// Route for resetting user's password after verification
+router.post("/reset-password", resetPassword)
+// Route for Changing the password
+router.post("/changepassword", auth,isDemo, changePassword)
+
+// ********************************************************************************************************
+//                                      SuperAdmin special routes
+// ********************************************************************************************************
+
+// Route for fetching all user details (only accessible by SuperAdmin)
+router.get("/getAllUsers",auth,isSuperAdmin,isDemo,getAllUserDetails)
+// Route for Deleting a user (only accessible by SuperAdmin)
+router.delete("/deleteUser",auth,isSuperAdmin,isDemo,deleteUser);
 
 
+// ********************************************************************************************************
+//                                      Resources routes
+// ********************************************************************************************************
+
+// Routes for managing resources
 router.post("/createResource", auth,isDemo, createResource);
 router.put("/updateResource", auth,isDemo, updateResources);
 router.delete("/deleteResource", auth,isDemo, deleteResource);
 router.get("/getResource", getResource);
 
+// ********************************************************************************************************
+//                                      Quiz routes
+// ********************************************************************************************************
+
+// Routes for managing quizzes
 router.post("/createQuiz", auth,isDemo, createQuiz);
 router.put("/updateQuiz", auth,isDemo, updateQuiz);
 router.delete("/deleteQuiz", auth,isDemo, deleteQuiz);
 router.get("/getQuiz",  getQuiz);                   
 
+
+// ********************************************************************************************************
+//                                      Blogs routes
+// ********************************************************************************************************
+
+// Routes for managing blogs
 router.post("/createBlog", auth,isDemo, createBlog); 
 router.put("/updateBlog", auth,isDemo, updateBlog);
 router.delete("/deleteBlog", auth,isDemo, deleteBlog);

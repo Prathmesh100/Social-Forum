@@ -8,7 +8,7 @@ require("dotenv").config();
 
 exports.createResource = async (req,res)=>{
     try{
-        let {title} =req.body;
+        let {title,category} =req.body;
         const file = req.files.resourceFile;
         // check if any of requird fields are missing
         if(!title || !file) 
@@ -41,6 +41,7 @@ exports.createResource = async (req,res)=>{
         const newResource= await resource.create({
             title,
             resourseUrl: resourceData?.secure_url,
+            category:category,
 
         });
 
@@ -69,7 +70,7 @@ exports.createResource = async (req,res)=>{
 exports.updateResources = async (req, res) => {
     try{
         // extracting resource id and information from request body
-        const {resourceId,title} = req.body;
+        const {resourceId,title,category} = req.body;
         if(!resourceId)
         {   
             return res.status(400).json({
@@ -91,6 +92,7 @@ exports.updateResources = async (req, res) => {
             // No file uploaded, update only the title
             const updatedResource = await resource.findByIdAndUpdate(resourceId, {
                 title: title || isResource?.title,
+                category: category || isResource?.category,
             }, { new: true });
 
             return res.status(200).json({
@@ -124,7 +126,8 @@ exports.updateResources = async (req, res) => {
         // update the resource with necessary information
         const updatedResource= await resource.findByIdAndUpdate({_id:resourceId},{
             title: title || isResource?.title,
-            resourseUrl: resourceData?.secure_url || isResource?.resourceUrl
+            resourseUrl: resourceData?.secure_url || isResource?.resourseUrl,
+            category: category || isResource?.category,
 
         },{new: true});
  
@@ -195,6 +198,7 @@ exports.getResource = async (req,res)=>{
 			{
 				title: true,
                 resourseUrl:true,
+                category: true,
 			})
             return res.status(200).json({
                 success: true,

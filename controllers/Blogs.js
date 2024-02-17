@@ -4,11 +4,11 @@ const { uploadImageToCloudinary,deleteImageFromCloudinary } = require("../utils/
 // Controller function to create a new blog post
 exports.createBlog = async (req, res) => {
     try {
-        const { title, content } = req.body;
+        const { title, content,category } = req.body;
         let files = req.files; // Assuming files are uploaded in 'images' field
 
         // Validate request body
-        if (!title || !content || !files || !files.images || !files.thumbnail) {
+        if (!title || !content || !files || !files.images || !files.thumbnail || !category) {
             return res.status(400).json({
                 success: false,
                 message: "Title, Thumbnail , content, and images are required fields",
@@ -45,7 +45,8 @@ exports.createBlog = async (req, res) => {
             title: title,
             thumbnail: thumbnail?.secure_url,
             images: uploadedImages,
-            content: content
+            content: content,
+            category:category,
         });
 
 
@@ -68,7 +69,7 @@ exports.createBlog = async (req, res) => {
 // Controller function to update a blog post
 exports.updateBlog = async (req, res) => {
     try {
-        const { title, content, blogId } = req.body;
+        const { title, content, blogId,category } = req.body;
         let files = req.files; // Assuming files are uploaded in 'images' field
 
         // Validate request body
@@ -95,7 +96,8 @@ exports.updateBlog = async (req, res) => {
             // No files uploaded, update only the title and content
             const updatedBlog = await blog.findByIdAndUpdate(blogId, {
                 title: title || isBlog.title,
-                content: content || isBlog.content
+                content: content || isBlog.content,
+                category: category || isBlog.category,
             }, { new: true });
 
             return res.status(200).json({
@@ -154,10 +156,11 @@ exports.updateBlog = async (req, res) => {
 
         // Update the blog post with the new data
         const updatedBlog = await blog.findByIdAndUpdate(blogId, {
-            title: title || isBlog.title,
+            title: title || isBlog?.title,
             thumbnail: thumbnail,
-            content: content || isBlog.content,
-            images: uploadedImages
+            content: content || isBlog?.content,
+            images: uploadedImages,
+            category: category || isBlog?.category,
         }, { new: true });
 
         return res.status(200).json({

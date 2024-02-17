@@ -33,21 +33,12 @@ const userSchema = new mongoose.Schema(
 			enum: ["SuperAdmin", "Admin"],
 			required: true,
 		},
-		// blogsDetails: {
-		// 	type: mongoose.Schema.Types.ObjectId,
-		// 	required: true,
-		// 	ref: "blogs",
-		// },
-		// resoursesDetails: [
-		// 	{
-		// 		type: mongoose.Schema.Types.ObjectId,
-		// 		ref: "resources",
-		// 	},
-		// ],
 		token: {
 			type: String,
 		},
-		
+		resetPasswordExpires: {
+			type: Date,
+		},
 		// Add timestamps for when the document is created and last modified
 	},
 	{ timestamps: true } 

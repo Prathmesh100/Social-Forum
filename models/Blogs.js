@@ -20,13 +20,10 @@ const blogsSchema = new mongoose.Schema(
             type: String,
             required: true
           },
-        // // Defined the user added this to the blogs
-        // user:{
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     required: true,
-        //     ref: "user",
-        // }
-		
+          category: {
+            type: String,
+            required: true
+          }
 		// Add timestamps for when the document is created and last modified
 	},
 	{ timestamps: true }

@@ -49,7 +49,6 @@ app.use("/",routes);
 
 
   
-
 app.get("/",(req,res)=>{
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-MEthods', 'POST,GET,OPTIONS,PUT,DELETE');

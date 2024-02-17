@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const mailSender = require("../utils/mailSender");
+const { passwordUpdated } = require("../templates/passwordUpdate");
 require("dotenv").config();
 
 // Signup Controller for Registering USers
@@ -138,3 +140,178 @@ exports.login = async (req, res) => {
 		});
 	}
 };
+
+
+// Controller for Changing Password
+exports.changePassword = async (req, res) => {
+	try {
+		// Get user data from req.user
+		const userDetails = await User.findById(req.user.id);
+
+		// Get old password, new password, and confirm new password from req.body
+		const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
+		// Validate old password
+		const isPasswordMatch = await bcrypt.compare(
+			oldPassword,
+			userDetails.password
+		);
+		if(oldPassword === newPassword){
+			return res.status(400).json({
+				success: false,
+				message: "New Password cannot be same as Old Password",
+			});
+		}
+		
+		if (!isPasswordMatch) {
+			// If old password does not match, return a 401 (Unauthorized) error
+			return res
+				.status(401)
+				.json({ success: false, message: "The password is incorrect" });
+		}
+
+		// Match new password and confirm new password
+		if (newPassword !== confirmNewPassword) {
+			// If new password and confirm new password do not match, return a 400 (Bad Request) error
+			return res.status(400).json({
+				success: false,
+				message: "The password and confirm password does not match",
+			});
+		}
+
+		// Update password
+		const encryptedPassword = await bcrypt.hash(newPassword, 10);
+		const updatedUserDetails = await User.findByIdAndUpdate(
+			req.user.id,
+			{ password: encryptedPassword },
+			{ new: true }
+		);
+
+		// Send notification email
+		try {
+			const emailResponse = await mailSender(
+				updatedUserDetails.email,
+				"Social Forum - Password Updated",
+				passwordUpdated(
+					updatedUserDetails.email,
+					`Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
+				)
+			);
+			console.log("Email sent successfully:", emailResponse.response);
+		} catch (error) {
+			// If there's an error sending the email, log the error and return a 500 (Internal Server Error) error
+			console.error("Error occurred while sending email:", error);
+			return res.status(500).json({
+				success: false,
+				message: "Error occurred while sending email",
+				error: error.message,
+			});
+		}
+
+		// Return success response
+		return res
+			.status(200)
+			.json({ success: true, message: "Password updated successfully" });
+	} catch (error) {
+		// If there's an error updating the password, log the error and return a 500 (Internal Server Error) error
+		console.error("Error occurred while updating password:", error);
+		return res.status(500).json({
+			success: false,
+			message: "Error occurred while updating password",
+			error: error.message,
+		});
+	}
+};
+
+
+exports.getUserDetails = async (req, res) => {
+	try {
+		const id = req.user.id;
+		const userDetails = await User.findById(id,{password:false});
+		console.log(userDetails);
+		res.status(200).json({
+			success: true,
+			message: "User Data fetched successfully",
+			data: userDetails,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+exports.updateUserDetails = async (req, res) => {
+	try {
+		const id = req.user.id;
+		const {firstName, lastName} = req.body;
+		const userDetails = await User.findById(id);
+		const userUpdatedDetails = await User.findByIdAndUpdate(id,{
+			firstName: firstName || userDetails?.firstName,
+			lastName: lastName || userDetails?.lastName,
+		},{new:true});
+		console.log(userDetails);
+		res.status(200).json({
+			success: true,
+			message: "User Data Updated successfully",
+			data: userUpdatedDetails,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+
+exports.getAllUserDetails = async (req, res) => {
+	try {
+		const id = req.user.id;
+		const userDetails = await User.find({},{password:false});
+		console.log(userDetails);
+		res.status(200).json({
+			success: true,
+			message: "User Data fetched successfully",
+			data: userDetails,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+exports.deleteUser = async (req, res) => {
+	try{
+		const {userId}= req.body
+		if(!userId){
+			return res.status(400).json({
+				success:false,
+				message:"userId is required"
+			})
+		}
+		const getUser = await User.findById(userId);
+		if(!getUser)
+		{
+			return res.status(404).json({
+				success:false,
+				message:"User not registered",
+			})
+		}
+		await User.findByIdAndDelete(userId);
+		return res.status(200).json({
+			success:true,
+			message:"User deleted Succesfully",
+		})
+	}
+	catch(error) {
+		console.log(error)
+		return res.status(500).json({
+			success:false,
+			message: error.message,
+		})
+	}
+}
