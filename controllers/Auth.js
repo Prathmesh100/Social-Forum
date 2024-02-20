@@ -294,8 +294,8 @@ exports.getAllUserDetails = async (req, res) => {
 
 exports.approveUser = async (req, res) => {
 	try {
-		const {approve,id} = req.body;
-		const userDetails = await User.findByIdAndUpdate({_id:id},{
+		const {approve,userId} = req.body;
+		const userDetails = await User.findByIdAndUpdate({_id:userId},{
 			approved:approve,
 		},{new: true});
 
