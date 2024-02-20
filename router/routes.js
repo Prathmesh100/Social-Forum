@@ -10,7 +10,7 @@ const {resetPasswordToken,resetPassword} = require("../controllers/ResetPassword
 const {createResource,updateResources,deleteResource,getResource}= require("../controllers/Resourses")
 const {createQuiz,updateQuiz,deleteQuiz,getQuiz} = require("../controllers/Quiz");
 const {createBlog,updateBlog,deleteBlog,getBlog}= require("../controllers/Blogs");
-const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser} = require("../controllers/Auth")
+const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth")
 
 
 // ********************************************************************************************************
@@ -43,6 +43,8 @@ router.post("/changepassword", auth,isDemo, changePassword)
 router.get("/getAllUsers",auth,isSuperAdmin,isDemo,getAllUserDetails)
 // Route for Deleting a user (only accessible by SuperAdmin)
 router.delete("/deleteUser",auth,isSuperAdmin,isDemo,deleteUser);
+// Approve user to sign up or not
+router.put("/approveUser",auth,isSuperAdmin,isDemo,approveUser);
 
 
 // ********************************************************************************************************

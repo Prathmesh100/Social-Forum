@@ -57,7 +57,8 @@ exports.signup = async (req, res) => {
 			email,
 			password: hashedPassword,
 			accountType: "Admin",
-			image: `https://api.dicebear.com/6.x/initials/svg?seed=${firstName} ${lastName}&backgroundColor=00897b,00acc1,039be5,1e88e5,3949ab,43a047,5e35b1,7cb342,8e24aa,c0ca33,d81b60,e53935,f4511e,fb8c00,fdd835,ffb300,ffd5dc,ffdfbf,c0aede,d1d4f9,b6e3f4&backgroundType=solid,gradientLinear&backgroundRotation=0,360,-350,-340,-330,-320&fontFamily=Arial&fontWeight=600`,
+			image: `https://api.dicebear.com/6.x/initials/svg?seed=${firstName}${lastName}&backgroundColor=00897b,00acc1,039be5,1e88e5,3949ab,43a047,5e35b1,7cb342,8e24aa,c0ca33,d81b60,e53935,f4511e,fb8c00,fdd835,ffb300,ffd5dc,ffdfbf,c0aede,d1d4f9,b6e3f4&backgroundType=solid,gradientLinear&backgroundRotation=0,360,-350,-340,-330,-320&fontFamily=Arial&fontWeight=600`,
+			approved:false,
 		});
 
 		return res.status(200).json({
@@ -99,6 +100,13 @@ exports.login = async (req, res) => {
 				success: false,
 				message: `User is not Registered with Us Please SignUp to Continue`,
 			});
+		}
+		if(!user?.approved)
+		{
+			return res.status(403).json({
+				success: false,
+				message: `User not approved by Super Admin`,
+			})
 		}
 
 		// Generate JWT token and Compare Password
@@ -283,6 +291,28 @@ exports.getAllUserDetails = async (req, res) => {
 		});
 	}
 };
+
+exports.approveUser = async (req, res) => {
+	try {
+		const {approve,id} = req.body;
+		const userDetails = await User.findByIdAndUpdate({_id:id},{
+			approved:approve,
+		},{new: true});
+
+		console.log(userDetails);
+		res.status(200).json({
+			success: true,
+			message: "User Data fetched successfully",
+			data: userDetails,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
 
 exports.deleteUser = async (req, res) => {
 	try{
