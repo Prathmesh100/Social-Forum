@@ -69,11 +69,12 @@ exports.createBlog = async (req, res) => {
 // Controller function to update a blog post
 exports.updateBlog = async (req, res) => {
     try {
-        const { title, content, blogId,category } = req.body;
+        const {id} = req.params
+        const { title, content,category } = req.body;
         let files = req.files; // Assuming files are uploaded in 'images' field
 
         // Validate request body
-        if (!blogId) {
+        if (!id) {
             return res.status(400).json({
                 success: false,
                 message: "Blog ID is required",
@@ -81,7 +82,7 @@ exports.updateBlog = async (req, res) => {
         }
 
         // Find the blog post by ID
-        const isBlog = await blog.findById(blogId);
+        const isBlog = await blog.findById(id);
 
         // Check if the blog post exists
         if (!isBlog) {
@@ -94,7 +95,7 @@ exports.updateBlog = async (req, res) => {
         // Check if files have been uploaded
         if (!files ) {
             // No files uploaded, update only the title and content
-            const updatedBlog = await blog.findByIdAndUpdate(blogId, {
+            const updatedBlog = await blog.findByIdAndUpdate(id, {
                 title: title || isBlog.title,
                 content: content || isBlog.content,
                 category: category || isBlog.category,
@@ -155,7 +156,7 @@ exports.updateBlog = async (req, res) => {
         }
 
         // Update the blog post with the new data
-        const updatedBlog = await blog.findByIdAndUpdate(blogId, {
+        const updatedBlog = await blog.findByIdAndUpdate(id, {
             title: title || isBlog?.title,
             thumbnail: thumbnail,
             content: content || isBlog?.content,
@@ -182,15 +183,15 @@ exports.updateBlog = async (req, res) => {
 
 exports.deleteBlog = async (req,res)=>{
     try{
-        const {blogId} = req.body;
-        if(!blogId)
+        const {id} = req.params;
+        if(!id)
         {
             return res.status(404).json({
                 success: false,
                 message: "BlogId is required"
             })
         } 
-        const isBlog= await blog.findById({_id:blogId});
+        const isBlog= await blog.findById({_id:id});
         if(!isBlog)
         {
             return res.status(404).json({
@@ -198,7 +199,7 @@ exports.deleteBlog = async (req,res)=>{
                 message: "Blog not found"
             })
         }
-        await blog.findByIdAndDelete({_id:blogId});
+        await blog.findByIdAndDelete({_id:id});
 
         return res.status(200).json({
             success:true,  
@@ -217,43 +218,35 @@ exports.deleteBlog = async (req,res)=>{
 
 
 // for getting  blog data
-exports.getBlog = async (req,res)=>{
-    try{
-        const {id} =req.params;
-        if(!id) {
+exports.getBlog = async (req, res) => {
+    try {
+        const { id } = req.params; // Extract the ID from request parameters
+        if (!id) {
             return res.status(404).json({
-                success:false,
-                message:"BlogId is required",
-            })
-        }
-        const allBlog = await blog.find({_id:id},
-			{
-				title: true,
-                thumbnail:true,
-                images:true,
-                content:true
-			})
-
-        if(!allBlog){
-            return res.status(404).json({
-                success:false,
-                message:"blog not found",
-            })
-        }
-            return res.status(200).json({
-                success: true,
-                data: allBlog,
+                success: false,
+                message: "BlogId is required",
             });
+        }
+        const foundBlog = await blog.findById(id); // Use findById to find blog by ID
+        if (!foundBlog) {
+            return res.status(404).json({
+                success: false,
+                message: "Blog not found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            data: foundBlog,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Can't Fetch Blog Data",
+            error: error.message,
+        });
     }
-    catch (error) {
-        console.log(error);
-		return res.status(404).json({
-			success: false,
-			message: `Can't Fetch Blog Data`,
-			error: error.message,
-		});
-    }
-}
+};
 
 // for getting All blog data
 exports.getAllBlogs = async (req,res)=>{

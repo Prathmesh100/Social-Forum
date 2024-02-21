@@ -53,8 +53,8 @@ router.put("/approveUser",auth,isSuperAdmin,isDemo,approveUser);
 
 // Routes for managing resources
 router.post("/createResource", auth,isDemo, createResource);
-router.put("/updateResource", auth,isDemo, updateResources);
-router.delete("/deleteResource", auth,isDemo, deleteResource);
+router.put("/updateResource/:id", auth,isDemo, updateResources);
+router.delete("/deleteResource/:id", auth,isDemo, deleteResource);
 router.get("/getResource", getResource);
 
 // ********************************************************************************************************
@@ -63,8 +63,8 @@ router.get("/getResource", getResource);
 
 // Routes for managing quizzes
 router.post("/createQuiz", auth,isDemo, createQuiz);
-router.put("/updateQuiz", auth,isDemo, updateQuiz);
-router.delete("/deleteQuiz", auth,isDemo, deleteQuiz);
+router.put("/updateQuiz/:id", auth,isDemo, updateQuiz);
+router.delete("/deleteQuiz/:id", auth,isDemo, deleteQuiz);
 router.get("/getQuiz",  getQuiz);                   
 
 
@@ -74,9 +74,9 @@ router.get("/getQuiz",  getQuiz);
 
 // Routes for managing blogs
 router.post("/createBlog", auth,isDemo, createBlog); 
-router.put("/updateBlog", auth,isDemo, updateBlog);
-router.delete("/deleteBlog", auth,isDemo, deleteBlog);
-router.get("/getBlog",getBlog);
+router.put("/updateBlog/:id", auth,isDemo, updateBlog);
+router.delete("/deleteBlog/:id", auth,isDemo, deleteBlog);
+router.get("/getBlog/:id",getBlog);
 router.get("/getAllBlogs",getAllBlogs);
 
 module.exports = router; 

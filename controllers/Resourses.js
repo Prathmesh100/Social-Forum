@@ -70,8 +70,9 @@ exports.createResource = async (req,res)=>{
 exports.updateResources = async (req, res) => {
     try{
         // extracting resource id and information from request body
-        const {resourceId,title,category} = req.body;
-        if(!resourceId)
+        const {id} = req.params
+        const {title,category} = req.body;
+        if(!id)
         {   
             return res.status(400).json({
                 success: false,
@@ -80,7 +81,7 @@ exports.updateResources = async (req, res) => {
         }
         console.log("going to check if resource")
          // Check if resource exists
-         const isResource = await resource.findById(resourceId);
+         const isResource = await resource.findById(id);
          if (!isResource) {
             return res.status(404).json({
                 success: false,
@@ -90,7 +91,7 @@ exports.updateResources = async (req, res) => {
         // Check if file is uploaded
         if (!req.files || !req.files.resourceFile) {
             // No file uploaded, update only the title
-            const updatedResource = await resource.findByIdAndUpdate(resourceId, {
+            const updatedResource = await resource.findByIdAndUpdate(id, {
                 title: title || isResource?.title,
                 category: category || isResource?.category,
             }, { new: true });
@@ -124,7 +125,7 @@ exports.updateResources = async (req, res) => {
         }
 
         // update the resource with necessary information
-        const updatedResource= await resource.findByIdAndUpdate({_id:resourceId},{
+        const updatedResource= await resource.findByIdAndUpdate({_id:id},{
             title: title || isResource?.title,
             resourseUrl: resourceData?.secure_url || isResource?.resourseUrl,
             category: category || isResource?.category,
@@ -154,9 +155,9 @@ exports.updateResources = async (req, res) => {
 exports.deleteResource = async (req,res)=>{
   try{
         // extracting resource id and information from request body
-        const {resourceId} = req.body;
+        const {id} = req.params;
         console.log(req.body)
-        if(!resourceId)
+        if(!id)
         {   
             return res.status(400).json({
                 success: false,
@@ -165,7 +166,7 @@ exports.deleteResource = async (req,res)=>{
         }
         console.log("going to check if resource")
          // Check if resource exists
-         const ifResource = await resource.findById(resourceId);
+         const ifResource = await resource.findById(id);
          if (!ifResource) {
             return res.status(404).json({
                 success: false,
@@ -173,7 +174,7 @@ exports.deleteResource = async (req,res)=>{
             });
         } 
         
-        await resource.findByIdAndDelete({_id:resourceId});
+        await resource.findByIdAndDelete({_id:id});
         res.status(200).json({
 			success: true,
 			message: "Resource data deleted in DB Successfully",
