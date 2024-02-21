@@ -219,14 +219,14 @@ exports.deleteBlog = async (req,res)=>{
 // for getting  blog data
 exports.getBlog = async (req,res)=>{
     try{
-        const {blogId} =req.body;
-        if(!blogId) {
+        const {id} =req.params;
+        if(!id) {
             return res.status(404).json({
                 success:false,
                 message:"BlogId is required",
             })
         }
-        const allBlog = await blog.find({_id:blogId},
+        const allBlog = await blog.find({_id:id},
 			{
 				title: true,
                 thumbnail:true,
