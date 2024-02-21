@@ -216,8 +216,47 @@ exports.deleteBlog = async (req,res)=>{
 }
 
 
-// for getting blog data
+// for getting  blog data
 exports.getBlog = async (req,res)=>{
+    try{
+        const {blogId} =req.body;
+        if(!blogId) {
+            return res.status(404).json({
+                success:false,
+                message:"BlogId is required",
+            })
+        }
+        const allBlog = await blog.find({_id:blogId},
+			{
+				title: true,
+                thumbnail:true,
+                images:true,
+                content:true
+			})
+
+        if(!allBlog){
+            return res.status(404).json({
+                success:false,
+                message:"blog not found",
+            })
+        }
+            return res.status(200).json({
+                success: true,
+                data: allBlog,
+            });
+    }
+    catch (error) {
+        console.log(error);
+		return res.status(404).json({
+			success: false,
+			message: `Can't Fetch Blog Data`,
+			error: error.message,
+		});
+    }
+}
+
+// for getting All blog data
+exports.getAllBlogs = async (req,res)=>{
     try{
         const allBlog = await blog.find({},
 			{
