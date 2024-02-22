@@ -16,6 +16,10 @@ const quizSchema = new mongoose.Schema(
             type: String,
             required: true,
           },
+          category: {
+            type: String,
+            required: true,
+          },
        
 		// Add timestamps for when the document is created and last modified
 	},

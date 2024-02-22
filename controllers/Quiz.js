@@ -3,13 +3,13 @@ const quiz = require("../models/Quiz");
 // Controller function to create a quiz
 exports.createQuiz = async (req, res) => {
     try {
-        const { question, options, correctAnswer } = req.body;
+        const { question, options, correctAnswer ,category} = req.body;
 
         // Validate request body
-        if (!question || !options || !correctAnswer || options.length !== 4) {
+        if (!question || !options || !correctAnswer || options.length !== 4 || !category) {
             return res.status(400).json({
                 success: false,
-                message: "Question, options (array of 4), and correct answer are required",
+                message: "Question, options (array of 4), category and correct answer are required",
             });
         }
 
@@ -17,7 +17,8 @@ exports.createQuiz = async (req, res) => {
         const newQuiz = await quiz.create({
             question: question,
             options: options,
-            correctAnswer: correctAnswer
+            correctAnswer: correctAnswer,
+            category: category
         });
 
         // Save the quiz to the database
@@ -39,29 +40,29 @@ exports.createQuiz = async (req, res) => {
 
 exports.updateQuiz = async (req, res) => {
     try {
-        const {id}=req.params;
-        const { question, options, correctAnswer } = req.body;
+        const { question, options, correctAnswer ,questionId} = req.body;
 
         // Validate request body
-        if (!id || !question || !options || !correctAnswer || options.length !== 4) {
+        if (!questionId ) {
             return res.status(400).json({
                 success: false,
-                message: "Question Id, Question, options (array of 4), and correct answer are required",
+                message: "Question Id is required",
             });
         }
 
-        const isQuestion = await quiz.findById({_id: id});
+        const isQuestion = await quiz.findById({_id: questionId});
         if(!isQuestion) {
             return res.status(400).json({
                 success: false,
-                message:"Quextion not found"
+                message:"Question not found"
             })
         }
 
-        const updatedQuiz = await quiz.findByIdAndUpdate({_id: id},{
+        const updatedQuiz = await quiz.findByIdAndUpdate({_id: questionId},{
             question: question || isQuestion?.question,
             options: options || isQuestion?.options,
             correctAnswer: correctAnswer || isQuestion?.correctAnswer,
+            category: category || isQuestion?.category,
         },{new: true});
 
         return res.status(200).json({
@@ -82,17 +83,17 @@ exports.updateQuiz = async (req, res) => {
 
 exports.deleteQuiz = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { questionId } = req.body;
 
         // Validate request body
-        if (!id) {
+        if (!questionId) {
             return res.status(400).json({
                 success: false,
                 message: "Question Id is required",
             });
         }
 
-       await quiz.findByIdAndDelete({_id: id});
+       await quiz.findByIdAndDelete({_id: questionId});
         
 
         return res.status(200).json({
@@ -118,6 +119,7 @@ exports.getQuiz = async (req,res)=>{
 				question: true,
                 options:true,
                 correctAnswer:true,
+                category:true,
 			})
             return res.status(200).json({
                 success: true,
