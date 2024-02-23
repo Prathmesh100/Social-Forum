@@ -63,7 +63,7 @@ router.get("/getResource", getResource);
 
 // Routes for managing quizzes
 router.post("/createQuiz", auth,isDemo, createQuiz);
-router.put("/updateQuiz/:id", auth,isDemo, updateQuiz);
+router.put("/updateQuiz", auth,isDemo, updateQuiz);
 router.delete("/deleteQuiz/:id", auth,isDemo, deleteQuiz);
 router.get("/getQuiz",  getQuiz);                   
 

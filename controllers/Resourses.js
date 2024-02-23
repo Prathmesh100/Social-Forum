@@ -155,9 +155,9 @@ exports.updateResources = async (req, res) => {
 exports.deleteResource = async (req,res)=>{
   try{
         // extracting resource id and information from request body
-        const {resourceId} = req.body;
-        console.log(req.body)
-        if(!resourceId)
+        const {id} = req.params;
+        console.log(req.params)
+        if(!id)
         {   
             return res.status(400).json({
                 success: false,
@@ -166,7 +166,7 @@ exports.deleteResource = async (req,res)=>{
         }
         console.log("going to check if resource")
          // Check if resource exists
-         const ifResource = await resource.findById(resourceId);
+         const ifResource = await resource.findById(id);
          if (!ifResource) {
             return res.status(404).json({
                 success: false,
@@ -174,7 +174,7 @@ exports.deleteResource = async (req,res)=>{
             });
         } 
         
-        await resource.findByIdAndDelete({_id:resourceId});
+        await resource.findByIdAndDelete({_id:id});
         res.status(200).json({
 			success: true,
 			message: "Resource data deleted in DB Successfully",

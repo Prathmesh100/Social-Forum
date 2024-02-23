@@ -183,15 +183,15 @@ exports.updateBlog = async (req, res) => {
 
 exports.deleteBlog = async (req,res)=>{
     try{
-        const {blogId} = req.body;
-        if(!blogId)
+        const {id} = req.params;
+        if(!id)
         {
             return res.status(404).json({
                 success: false,
                 message: "BlogId is required"
             })
         } 
-        const isBlog= await blog.findById({_id:blogId});
+        const isBlog= await blog.findById({_id:id});
         if(!isBlog)
         {
             return res.status(404).json({
@@ -199,7 +199,7 @@ exports.deleteBlog = async (req,res)=>{
                 message: "Blog not found"
             })
         }
-        await blog.findByIdAndDelete({_id:blogId});
+        await blog.findByIdAndDelete({_id:id});
 
         return res.status(200).json({
             success:true,  
