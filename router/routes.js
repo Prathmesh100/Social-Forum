@@ -9,7 +9,7 @@ const {resetPasswordToken,resetPassword} = require("../controllers/ResetPassword
 
 const {createResource,updateResources,deleteResource,getResource}= require("../controllers/Resourses")
 const {createQuiz,updateQuiz,deleteQuiz,getQuiz} = require("../controllers/Quiz");
-const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog}= require("../controllers/Blogs");
+const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog,createDummyBlog}= require("../controllers/Blogs");
 const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth")
 
 
@@ -78,5 +78,6 @@ router.put("/updateBlog/:id", auth,isDemo, updateBlog);
 router.delete("/deleteBlog/:id", auth,isDemo, deleteBlog);
 router.get("/getBlog/:id",getBlog);
 router.get("/getAllBlogs",getAllBlogs);
+router.post("/createDummyBlog", createDummyBlog);
 
 module.exports = router; 

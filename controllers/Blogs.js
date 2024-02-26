@@ -65,6 +65,69 @@ exports.createBlog = async (req, res) => {
     }
 };
 
+// dummy
+exports.createDummyBlog = async (req, res) => {
+    try {
+        const { title, content,category } = req.body;
+        let files = req.files; // Assuming files are uploaded in 'images' field
+
+        // Validate request body
+        if (!title || !content || !files || !files.images || !files.thumbnail || !category) {
+            return res.status(400).json({
+                success: false,
+                message: "Title, Thumbnail , content, and images are required fields",
+            });
+        }
+
+        const thumbnail= await uploadImageToCloudinary(files.thumbnail,process.env.FOLDER_NAME);
+
+        // Upload images to Cloudinary
+        let uploadedImages=[];
+        if(files.images.length > 1)
+        {
+            uploadedImages = await Promise.all(files.images.map(async (file) => {
+                try {
+                    const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
+                    return imageUrl.secure_url;
+                } catch (error) {
+                    console.error("Error uploading image to Cloudinary:", error);
+                    throw new Error("Failed to upload image to Cloudinary");
+                }
+            }));
+        }
+        else 
+        {
+            const temp= await uploadImageToCloudinary(
+                files.images,
+                process.env.FOLDER_NAME
+            );
+            uploadedImages=temp?.secure_url;
+        }
+
+        // Create a new blog instance
+        const newBlog = await blog.create({
+            title: title,
+            thumbnail: thumbnail?.secure_url,
+            images: uploadedImages,
+            content: content,
+            category:category,
+        });
+
+
+        res.status(200).json({
+            success: true,
+            data: newBlog,
+            message: "Blog post created successfully",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to create blog post",
+            error: error.message,
+        });
+    }
+};
 
 // Controller function to update a blog post
 exports.updateBlog = async (req, res) => {
