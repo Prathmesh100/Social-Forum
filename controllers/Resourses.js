@@ -11,7 +11,7 @@ exports.createResource = async (req,res)=>{
         let {title,category,dataType,link} =req.body;
         const file = req.files.resourceFile;
         // check if any of requird fields are missing
-        if(!title || !file || !category || !dataType) 
+        if(!title || !category || !dataType) 
         {
             return res.status(400).json({
                 success:false,
@@ -48,39 +48,46 @@ exports.createResource = async (req,res)=>{
         }
         else
         {
+            if(!file)
+            {
+                return res.status(400).json({
+                    success:false,
+                    message:"resourceFile required"
+                })
+            }
             const fileType = file?.name.split('.')[1];
-        let resourceData = null;
-        if(fileType==="pdf"){
-            resourceData= await uploadPDFToCloudinary(
-                file,
-                process.env.FOLDER_NAME
-            );
-                // console.log("pdf upload", resourceData);
-        }
-        else{
-            resourceData= await uploadImageToCloudinary(
-                file,
-                process.env.FOLDER_NAME
-            );
-                // console.log("image upload", resourceData);
-        }
+            let resourceData = null;
+            if(fileType==="pdf"){
+                resourceData= await uploadPDFToCloudinary(
+                    file,
+                    process.env.FOLDER_NAME
+                );
+                    // console.log("pdf upload", resourceData);
+            }
+            else{
+                resourceData= await uploadImageToCloudinary(
+                    file,
+                    process.env.FOLDER_NAME
+                );
+                    // console.log("image upload", resourceData);
+            }
 
-        // create a new Resource object with given data
-        const newResource= await resource.create({
-            title,
-            resourseUrl: resourceData?.secure_url,
-            category:category,
-            dataType:dataType
+            // create a new Resource object with given data
+            const newResource= await resource.create({
+                title,
+                resourseUrl: resourceData?.secure_url,
+                category:category,
+                dataType:dataType
 
-        });
+            });
 
-        // Return the response
-		res.status(200).json({
-			success: true,
-			data: newResource,
-			message: "Resource data inserted in DB Successfully",
-		});
- 
+            // Return the response
+            res.status(200).json({
+                success: true,
+                data: newResource,
+                message: "Resource data inserted in DB Successfully",
+            });
+    
         }
 
     }  
