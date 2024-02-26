@@ -72,14 +72,14 @@ exports.createDummyBlog = async (req, res) => {
         let files = req.files; // Assuming files are uploaded in 'images' field
 
         // Validate request body
-        if (!title || !content || !files || !files.images || !files.thumbnail || !category) {
-            return res.status(400).json({
-                success: false,
-                message: "Title, Thumbnail , content, and images are required fields",
-            });
-        }
+        // if (!title || !content || !files || !files.images || !files.thumbnail || !category) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "Title, Thumbnail , content, and images are required fields",
+        //     });
+        // }
 
-        const thumbnail= await uploadImageToCloudinary(files.thumbnail,process.env.FOLDER_NAME);
+        // const thumbnail= await uploadImageToCloudinary(files.thumbnail,process.env.FOLDER_NAME);
 
         // Upload images to Cloudinary
         let uploadedImages=[];
@@ -106,11 +106,11 @@ exports.createDummyBlog = async (req, res) => {
 
         // Create a new blog instance
         const newBlog = await blog.create({
-            title: title,
-            thumbnail: thumbnail?.secure_url,
+            title: "title",
+            thumbnail: "thumbnail?.secure_url",
             images: uploadedImages,
-            content: content,
-            category:category,
+            content: "content",
+            category:"category",
         });
 
 
