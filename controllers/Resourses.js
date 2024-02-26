@@ -8,10 +8,10 @@ require("dotenv").config();
 
 exports.createResource = async (req,res)=>{
     try{
-        let {title,category} =req.body;
+        let {title,category,dataType,link} =req.body;
         const file = req.files.resourceFile;
         // check if any of requird fields are missing
-        if(!title || !file) 
+        if(!title || !file || !category || !dataType) 
         {
             return res.status(400).json({
                 success:false,
@@ -20,7 +20,35 @@ exports.createResource = async (req,res)=>{
         }
 
         console.log("all fields are required complete");
-        const fileType = file?.name.split('.')[1];
+        if(dataType==='link')
+        {
+            if(!link)
+            {
+                return res.status(400).json({
+                    success:false,
+                    message: "link required"
+                });
+            }
+            //create a new Resource object with given data
+            const newResource= await resource.create({
+                title,
+                resourseUrl: link,
+                category:category,
+                dataType:dataType,
+    
+            });
+    
+            // Return the response
+            res.status(200).json({
+                success: true,
+                data: newResource,
+                message: "Resource data inserted in DB Successfully",
+            });
+     
+        }
+        else
+        {
+            const fileType = file?.name.split('.')[1];
         let resourceData = null;
         if(fileType==="pdf"){
             resourceData= await uploadPDFToCloudinary(
@@ -42,6 +70,7 @@ exports.createResource = async (req,res)=>{
             title,
             resourseUrl: resourceData?.secure_url,
             category:category,
+            dataType:dataType
 
         });
 
@@ -52,6 +81,7 @@ exports.createResource = async (req,res)=>{
 			message: "Resource data inserted in DB Successfully",
 		});
  
+        }
 
     }  
     catch (error) {
@@ -71,12 +101,19 @@ exports.updateResources = async (req, res) => {
     try{
         // extracting resource id and information from request body
         const {id} = req.params
-        const {title,category} = req.body;
-        if(!id)
+        const {title,category,dataType,link} = req.body;
+        if(!id )
         {   
             return res.status(400).json({
                 success: false,
                 message: "Resource ID required",
+            })
+        }
+        if(!dataType)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "Resource data type requird",
             })
         }
         console.log("going to check if resource")
@@ -88,12 +125,28 @@ exports.updateResources = async (req, res) => {
                 message: "Resource not found"
             });
         } 
+        if(dataType ==='link')
+        {
+            const updatedResource = await resource.findByIdAndUpdate(id, {
+                title: title || isResource?.title,
+                category: category || isResource?.category,
+                resourseUrl: link || isResource?.link,
+                dataType:dataType
+            }, { new: true });
+
+            return res.status(200).json({
+                success: true,
+                data: updatedResource,
+                message: "Resource title Updated in DB Successfully",
+            });
+        }
         // Check if file is uploaded
         if (!req.files || !req.files.resourceFile) {
             // No file uploaded, update only the title
             const updatedResource = await resource.findByIdAndUpdate(id, {
                 title: title || isResource?.title,
                 category: category || isResource?.category,
+                dataType:dataType
             }, { new: true });
 
             return res.status(200).json({
@@ -129,6 +182,7 @@ exports.updateResources = async (req, res) => {
             title: title || isResource?.title,
             resourseUrl: resourceData?.secure_url || isResource?.resourseUrl,
             category: category || isResource?.category,
+            dataType:dataType
 
         },{new: true});
  
@@ -200,6 +254,7 @@ exports.getResource = async (req,res)=>{
 				title: true,
                 resourseUrl:true,
                 category: true,
+                dataType:true
 			})
             return res.status(200).json({
                 success: true,

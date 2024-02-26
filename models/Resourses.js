@@ -17,7 +17,12 @@ const resourcesSchema = new mongoose.Schema(
         category:{
             type: String,
             required: true,
-          }
+          },
+          dataType:{
+            type: String,
+			enum: ["link", "file"],
+			required: true,
+        }
 		
 		// Add timestamps for when the document is created and last modified
 	},
