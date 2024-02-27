@@ -253,8 +253,37 @@ exports.deleteResource = async (req,res)=>{
     }
 }
 
-// for getting resources data
 exports.getResource = async (req,res)=>{
+    try{
+        const {id} = req.params;
+        
+        const Resource = await resource.find({_id:id},
+			{
+			})
+            if(!Resource)
+            {
+                return res.status(400).json({
+                    success:false,
+                    message:"Resource not found"
+                })
+            }
+            return res.status(200).json({
+                success: true,
+                data: Resource,
+            });
+    }
+    catch (error) {
+        console.log(error);
+		return res.status(404).json({
+			success: false,
+			message: `Can't Fetch Resource Data`,
+			error: error.message,
+		});
+    }
+}
+
+// for getting resources data
+exports.getAllResources = async (req,res)=>{
     try{
         const allResources = await resource.find({},
 			{

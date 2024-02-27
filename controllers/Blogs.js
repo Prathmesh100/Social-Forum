@@ -106,11 +106,11 @@ exports.createDummyBlog = async (req, res) => {
 
         // Create a new blog instance
         const newBlog = await blog.create({
-            title: "title",
+            title: title || "title",
             thumbnail: "thumbnail?.secure_url",
             images: uploadedImages,
-            content: "content",
-            category:"category",
+            content:content || "content",
+            category:category || "category",
         });
 
 

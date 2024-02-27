@@ -7,8 +7,8 @@ const { auth, isSuperAdmin } = require("../middlewares/auth")
 const {resetPasswordToken,resetPassword} = require("../controllers/ResetPassword")
 // Import the Controllers
 
-const {createResource,updateResources,deleteResource,getResource}= require("../controllers/Resourses")
-const {createQuiz,updateQuiz,deleteQuiz,getQuiz} = require("../controllers/Quiz");
+const {createResource,updateResources,deleteResource,getAllResources,getResource}= require("../controllers/Resourses")
+const {createQuiz,updateQuiz,deleteQuiz,getAllQuizes,getQuiz} = require("../controllers/Quiz");
 const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog,createDummyBlog}= require("../controllers/Blogs");
 const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth")
 
@@ -55,7 +55,8 @@ router.put("/approveUser",auth,isSuperAdmin,isDemo,approveUser);
 router.post("/createResource", auth,isDemo, createResource);
 router.put("/updateResource/:id", auth,isDemo, updateResources);
 router.delete("/deleteResource/:id", auth,isDemo, deleteResource);
-router.get("/getResource", getResource);
+router.get("/getResource/:id", getResource);
+router.get("/getAllResources", getAllResources);
 
 // ********************************************************************************************************
 //                                      Quiz routes
@@ -65,7 +66,8 @@ router.get("/getResource", getResource);
 router.post("/createQuiz", auth,isDemo, createQuiz);
 router.put("/updateQuiz", auth,isDemo, updateQuiz);
 router.delete("/deleteQuiz/:id", auth,isDemo, deleteQuiz);
-router.get("/getQuiz",  getQuiz);                   
+router.get("/getQuiz/:id",  getQuiz);    
+router.get("/getAllQuizes",getAllQuizes)               
 
 
 // ********************************************************************************************************

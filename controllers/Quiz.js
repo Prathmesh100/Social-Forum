@@ -114,6 +114,40 @@ exports.deleteQuiz = async (req, res) => {
 // for getting quiz data
 exports.getQuiz = async (req,res)=>{
     try{
+        const {id} = req.params;
+        
+        const Quiz = await quiz.find({_id:id},
+			{
+				question: true,
+                options:true,
+                correctAnswer:true,
+                category:true,
+			})
+            if(!Quiz)
+            {
+                return res.status(400).json({
+                    success:false,
+                    message:"Quiz not found"
+                })
+            }
+            return res.status(200).json({
+                success: true,
+                data: Quiz,
+            });
+    }
+    catch (error) {
+        console.log(error);
+		return res.status(404).json({
+			success: false,
+			message: `Can't Fetch Quiz Data`,
+			error: error.message,
+		});
+    }
+}
+
+// for getting all quiz data
+exports.getAllQuizes = async (req,res)=>{
+    try{
         const allQuiz = await quiz.find({},
 			{
 				question: true,
