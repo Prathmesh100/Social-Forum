@@ -319,7 +319,8 @@ exports.getAllBlogs = async (req,res)=>{
 				title: true,
                 thumbnail:true,
                 images:true,
-                content:true
+                content:true,
+                category:true,
 			})
             return res.status(200).json({
                 success: true,
