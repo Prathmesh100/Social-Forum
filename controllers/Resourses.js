@@ -77,7 +77,7 @@ exports.createResource = async (req,res)=>{
                 title,
                 resourseUrl: resourceData?.secure_url,
                 category:category,
-                dataType:dataType
+                resourceType:resourceType
 
             });
 
@@ -108,7 +108,7 @@ exports.updateResources = async (req, res) => {
     try{
         // extracting resource id and information from request body
         const {id} = req.params
-        const {title,category,dataType,link} = req.body;
+        const {title,category,resourceType,link} = req.body;
         if(!id )
         {   
             return res.status(400).json({
@@ -116,7 +116,7 @@ exports.updateResources = async (req, res) => {
                 message: "Resource ID required",
             })
         }
-        if(!dataType)
+        if(!resourceType)
         {
             return res.status(400).json({
                 success: false,
@@ -132,13 +132,13 @@ exports.updateResources = async (req, res) => {
                 message: "Resource not found"
             });
         } 
-        if(dataType ==='link')
+        if(resourceType ==='link')
         {
             const updatedResource = await resource.findByIdAndUpdate(id, {
                 title: title || isResource?.title,
                 category: category || isResource?.category,
                 resourseUrl: link || isResource?.link,
-                dataType:dataType
+                resourceType:resourceType
             }, { new: true });
 
             return res.status(200).json({
@@ -153,7 +153,7 @@ exports.updateResources = async (req, res) => {
             const updatedResource = await resource.findByIdAndUpdate(id, {
                 title: title || isResource?.title,
                 category: category || isResource?.category,
-                dataType:dataType
+                resourceType:resourceType
             }, { new: true });
 
             return res.status(200).json({
@@ -189,7 +189,7 @@ exports.updateResources = async (req, res) => {
             title: title || isResource?.title,
             resourseUrl: resourceData?.secure_url || isResource?.resourseUrl,
             category: category || isResource?.category,
-            dataType:dataType
+            resourceType:resourceType
 
         },{new: true});
  
@@ -290,7 +290,7 @@ exports.getAllResources = async (req,res)=>{
 				title: true,
                 resourseUrl:true,
                 category: true,
-                dataType:true
+                resourceType:true
 			})
             return res.status(200).json({
                 success: true,
