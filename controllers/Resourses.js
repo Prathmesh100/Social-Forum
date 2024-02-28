@@ -8,19 +8,18 @@ require("dotenv").config();
 
 exports.createResource = async (req,res)=>{
     try{
-        let {title,category,dataType,link} =req.body;
-        const file = req.files.resourceFile;
-        // check if any of requird fields are missing
-        if(!title || !category || !dataType) 
+        const {title,category,resourceType,link} =req.body;
+       
+        if(!title || !category || !resourceType) 
         {
             return res.status(400).json({
                 success:false,
                 message: "All fields are required"
             });
         }
-
+        console.log(resourceType);
         console.log("all fields are required complete");
-        if(dataType==='link')
+        if(resourceType==="link")
         {
             if(!link)
             {
@@ -34,7 +33,7 @@ exports.createResource = async (req,res)=>{
                 title,
                 resourseUrl: link,
                 category:category,
-                dataType:dataType,
+                resourceType:resourceType,
     
             });
     
@@ -47,7 +46,8 @@ exports.createResource = async (req,res)=>{
      
         }
         else
-        {
+        {   const file = req.files.resourceFile;
+            // check if any of requird fields are missing
             if(!file)
             {
                 return res.status(400).json({

@@ -18,9 +18,8 @@ const resourcesSchema = new mongoose.Schema(
             type: String,
             required: true,
           },
-          dataType:{
+        resourceType:{
             type: String,
-			enum: ["link", "file"],
 			required: true,
         }
 		
