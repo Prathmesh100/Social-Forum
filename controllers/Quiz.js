@@ -83,17 +83,17 @@ exports.updateQuiz = async (req, res) => {
 
 exports.deleteQuiz = async (req, res) => {
     try {
-        const { questionId } = req.body;
+        const { id } = req.params;
 
         // Validate request body
-        if (!questionId) {
+        if (!id) {
             return res.status(400).json({
                 success: false,
                 message: "Question Id is required",
             });
         }
 
-       await quiz.findByIdAndDelete({_id: questionId});
+       await quiz.findByIdAndDelete({_id: id});
         
 
         return res.status(200).json({
