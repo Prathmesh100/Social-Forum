@@ -40,17 +40,17 @@ exports.createQuiz = async (req, res) => {
 
 exports.updateQuiz = async (req, res) => {
     try {
-        const { question, options, correctAnswer ,questionId} = req.body;
-
+        const { question, options, correctAnswer} = req.body;
+        const {id} = req.params
         // Validate request body
-        if (!questionId ) {
+        if (!id ) {
             return res.status(400).json({
                 success: false,
                 message: "Question Id is required",
             });
         }
 
-        const isQuestion = await quiz.findById({_id: questionId});
+        const isQuestion = await quiz.findById({_id: id});
         if(!isQuestion) {
             return res.status(400).json({
                 success: false,
@@ -58,7 +58,7 @@ exports.updateQuiz = async (req, res) => {
             })
         }
 
-        const updatedQuiz = await quiz.findByIdAndUpdate({_id: questionId},{
+        const updatedQuiz = await quiz.findByIdAndUpdate({_id: id},{
             question: question || isQuestion?.question,
             options: options || isQuestion?.options,
             correctAnswer: correctAnswer || isQuestion?.correctAnswer,
