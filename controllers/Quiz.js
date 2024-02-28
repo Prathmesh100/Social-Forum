@@ -40,7 +40,7 @@ exports.createQuiz = async (req, res) => {
 
 exports.updateQuiz = async (req, res) => {
     try {
-        const { question, options, correctAnswer} = req.body;
+        const { question, options, correctAnswer,category} = req.body;
         const {id} = req.params
         // Validate request body
         if (!id ) {
