@@ -4,47 +4,47 @@ const { uploadImageToCloudinary,deleteImageFromCloudinary } = require("../utils/
 // Controller function to create a new blog post
 exports.createBlog = async (req, res) => {
     try {
-        const { title, content,category } = req.body;
+        const { title, content,category,imagesUrl } = req.body;
         let files = req.files; // Assuming files are uploaded in 'images' field
 
         // Validate request body
-        if (!title || !content || !files || !files.images || !files.thumbnail || !category) {
+        if (!title || !content || !files || !imagesUrl || !files.thumbnail || !category) {
             return res.status(400).json({
                 success: false,
-                message: "Title, Thumbnail , content, and images are required fields",
+                message: "Title, Thumbnail , content, and imagesUrl are required fields",
             });
         }
 
         const thumbnail= await uploadImageToCloudinary(files.thumbnail,process.env.FOLDER_NAME);
 
-        // Upload images to Cloudinary
-        let uploadedImages=[];
-        if(files.images.length > 1)
-        {
-            uploadedImages = await Promise.all(files.images.map(async (file) => {
-                try {
-                    const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
-                    return imageUrl.secure_url;
-                } catch (error) {
-                    console.error("Error uploading image to Cloudinary:", error);
-                    throw new Error("Failed to upload image to Cloudinary");
-                }
-            }));
-        }
-        else 
-        {
-            const temp= await uploadImageToCloudinary(
-                files.images,
-                process.env.FOLDER_NAME
-            );
-            uploadedImages=temp?.secure_url;
-        }
+        // // Upload images to Cloudinary
+        // let uploadedImages=[];
+        // if(files.images.length > 1)
+        // {
+        //     uploadedImages = await Promise.all(files.images.map(async (file) => {
+        //         try {
+        //             const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
+        //             return imageUrl.secure_url;
+        //         } catch (error) {
+        //             console.error("Error uploading image to Cloudinary:", error);
+        //             throw new Error("Failed to upload image to Cloudinary");
+        //         }
+        //     }));
+        // }
+        // else 
+        // {
+        //     const temp= await uploadImageToCloudinary(
+        //         files.images,
+        //         process.env.FOLDER_NAME
+        //     );
+        //     uploadedImages=temp?.secure_url;
+        // }
 
         // Create a new blog instance
         const newBlog = await blog.create({
             title: title,
             thumbnail: thumbnail?.secure_url,
-            images: uploadedImages,
+            images: imagesUrl,
             content: content,
             category:category,
         });
@@ -133,7 +133,7 @@ exports.createDummyBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const {id} = req.params
-        const { title, content,category } = req.body;
+        const { title, content,category,imagesUrl } = req.body;
         let files = req.files; // Assuming files are uploaded in 'images' field
 
         // Validate request body
@@ -162,6 +162,8 @@ exports.updateBlog = async (req, res) => {
                 title: title || isBlog.title,
                 content: content || isBlog.content,
                 category: category || isBlog.category,
+                images: imagesUrl || isBlog.images
+
             }, { new: true });
 
             return res.status(200).json({
@@ -182,48 +184,48 @@ exports.updateBlog = async (req, res) => {
         
 
 
-        // Delete earlier uploaded images from Cloudinary
-        if(files.images)
-        { await Promise.all(isBlog.images.map(async (earlierImage) => {
-                try {
-                    await deleteImageFromCloudinary(earlierImage);
-                } catch (error) {
-                    console.error("Error deleting earlier uploaded image from Cloudinary:", error);
-                }
-            }));
-        }
+        // // Delete earlier uploaded images from Cloudinary
+        // if(files.images)
+        // { await Promise.all(isBlog.images.map(async (earlierImage) => {
+        //         try {
+        //             await deleteImageFromCloudinary(earlierImage);
+        //         } catch (error) {
+        //             console.error("Error deleting earlier uploaded image from Cloudinary:", error);
+        //         }
+        //     }));
+        // }
 
 
 
-        // Upload new images to Cloudinary
-        let uploadedImages=isBlog.images;
-        if(files.images!==undefined && files.images.length > 1  )
-        {
-            uploadedImages = await Promise.all(files.images.map(async (file) => {
-                try {
-                    const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
-                    return imageUrl.secure_url;
-                } catch (error) {
-                    console.error("Error uploading image to Cloudinary:", error);
-                    throw new Error("Failed to upload image to Cloudinary");
-                }
-            }));
-        }
-        else if(files.images!==undefined)
-        {
-            const temp= await uploadImageToCloudinary(
-                files.images,
-                process.env.FOLDER_NAME
-            );
-            uploadedImages=temp?.secure_url;
-        }
+        // // Upload new images to Cloudinary
+        // let uploadedImages=isBlog.images;
+        // if(files.images!==undefined && files.images.length > 1  )
+        // {
+        //     uploadedImages = await Promise.all(files.images.map(async (file) => {
+        //         try {
+        //             const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
+        //             return imageUrl.secure_url;
+        //         } catch (error) {
+        //             console.error("Error uploading image to Cloudinary:", error);
+        //             throw new Error("Failed to upload image to Cloudinary");
+        //         }
+        //     }));
+        // }
+        // else if(files.images!==undefined)
+        // {
+        //     const temp= await uploadImageToCloudinary(
+        //         files.images,
+        //         process.env.FOLDER_NAME
+        //     );
+        //     uploadedImages=temp?.secure_url;
+        // }
 
         // Update the blog post with the new data
         const updatedBlog = await blog.findByIdAndUpdate(id, {
             title: title || isBlog?.title,
             thumbnail: thumbnail,
             content: content || isBlog?.content,
-            images: uploadedImages,
+            images: imagesUrl || isBlog.images,
             category: category || isBlog?.category,
         }, { new: true });
 

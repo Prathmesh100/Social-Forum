@@ -10,7 +10,8 @@ const {resetPasswordToken,resetPassword} = require("../controllers/ResetPassword
 const {createResource,updateResources,deleteResource,getAllResources,getResource}= require("../controllers/Resourses")
 const {createQuiz,updateQuiz,deleteQuiz,getAllQuizes,getQuiz} = require("../controllers/Quiz");
 const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog,createDummyBlog}= require("../controllers/Blogs");
-const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth")
+const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth");
+const { imageUpload, imageRemover } = require("../controllers/ImageUploader");
 
 
 // ********************************************************************************************************
@@ -81,5 +82,8 @@ router.delete("/deleteBlog/:id", auth,isDemo, deleteBlog);
 router.get("/getBlog/:id",getBlog);
 router.get("/getAllBlogs",getAllBlogs);
 router.post("/createDummyBlog", createDummyBlog);
+router.post("/uploadBlogImage",auth,isDemo, imageUpload);
+router.post("/removeBlogImage",auth,isDemo, imageRemover);
+
 
 module.exports = router; 
