@@ -23,7 +23,7 @@ router.post("/signup",signup)
 // Route for getting User information
 router.get("/getUserDetails",auth,isDemo, getUserDetails)
 // Route for updating user details
-router.post("/updateUserDetails",auth,isDemo,updateUserDetails)
+router.put("/updateUserDetails",auth,isDemo,updateUserDetails)
 
 // ********************************************************************************************************
 //                                      Reset Password routes
