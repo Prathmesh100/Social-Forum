@@ -295,6 +295,12 @@ exports.getAllUserDetails = async (req, res) => {
 exports.approveUser = async (req, res) => {
 	try {
 		const {approve,userId} = req.body;
+		if(!userId){
+			return res.status(400).json({
+				success:false,
+				message:"userId is required"
+			})
+		}
 		const userDetails = await User.findByIdAndUpdate({_id:userId},{
 			approved:approve,
 		},{new: true});
