@@ -322,14 +322,14 @@ exports.approveUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
 	try{
-		const {userId}= req.body
-		if(!userId){
+		const {id}= req.params
+		if(!id){
 			return res.status(400).json({
 				success:false,
 				message:"userId is required"
 			})
 		}
-		const getUser = await User.findById(userId);
+		const getUser = await User.findById(id);
 		if(!getUser)
 		{
 			return res.status(404).json({
@@ -337,7 +337,7 @@ exports.deleteUser = async (req, res) => {
 				message:"User not registered",
 			})
 		}
-		await User.findByIdAndDelete(userId);
+		await User.findByIdAndDelete(id);
 		return res.status(200).json({
 			success:true,
 			message:"User deleted Succesfully",
