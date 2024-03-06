@@ -285,13 +285,7 @@ exports.getResource = async (req,res)=>{
 // for getting resources data
 exports.getAllResources = async (req,res)=>{
     try{
-        const allResources = await resource.find({},
-			{
-				title: true,
-                resourseUrl:true,
-                category: true,
-                resourceType:true
-			})
+        const allResources = await resource.find()
             return res.status(200).json({
                 success: true,
                 data: allResources,

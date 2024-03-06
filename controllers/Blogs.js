@@ -315,15 +315,8 @@ exports.getBlog = async (req, res) => {
 // for getting All blog data
 exports.getAllBlogs = async (req,res)=>{
     try{
-        const allBlog = await blog.find({},
-			{
-				title: true,
-                thumbnail:true,
-                images:true,
-                content:true,
-                category:true,
-			})
-            return res.status(200).json({
+        const allBlog = await blog.find();
+        return res.status(200).json({
                 success: true,
                 data: allBlog,
             });

@@ -43,7 +43,7 @@ router.post("/changepassword", auth,isDemo, changePassword)
 // Route for fetching all user details (only accessible by SuperAdmin)
 router.get("/getAllUsers",auth,isSuperAdmin,isDemo,getAllUserDetails)
 // Route for Deleting a user (only accessible by SuperAdmin)
-router.delete("/deleteUser/:id",auth,isSuperAdmin,isDemo,deleteUser);
+                                                                 router.delete("/deleteUser/:id",auth,isSuperAdmin,isDemo,deleteUser);
 // Approve user to sign up or not
 router.put("/approveUser",auth,isSuperAdmin,isDemo,approveUser);
 
