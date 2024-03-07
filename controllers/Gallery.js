@@ -85,12 +85,12 @@ exports.updateGalleryImage = async (req, res) => {
         }
         else{
             await deleteImageFromCloudinary(isGallery?.image);
-            let image= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
-            image= image?.secure_url;
+            let newImage= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
+            newImage= newImage?.secure_url;
 
             const updatedGallery = await gallery.findByIdAndUpdate({_id:id},{
                 title:title || isGallery?.title,
-                image:image
+                image:newImage
             },{ new: true })
 
             return res.status(200).json({
