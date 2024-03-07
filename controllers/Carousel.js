@@ -129,7 +129,7 @@ exports.deleteCarouselImage= async (req,res)=>{
                 message:"Carousel Image data not found"
             })
         }
-        await deleteImageFromCloudinary(carousel?.image);
+        await deleteImageFromCloudinary(isCarouselImage?.image);
         await carousel.findByIdAndDelete({_id:id});
 
         return res.status(200).json({
