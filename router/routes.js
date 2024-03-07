@@ -102,7 +102,7 @@ router.delete('/deleteAnnouncement/:id', auth,isDemo,deleteAnnouncement);
 // ********************************************************************************************************
 
 // Routes for managing gallery
-router.post('createGalleryImage', auth, isDemo, createGalleryImage);
+router.post('/createGalleryImage', auth, isDemo, createGalleryImage);
 router.put('/updateGalleryImage/:id', auth, isDemo, updateGalleryImage);
 router.get('/getAllGalleryImages', getAllGalleryImage);
 router.delete('/deleteGalleryImage/:id', auth, isDemo, deleteGalleryImage);
