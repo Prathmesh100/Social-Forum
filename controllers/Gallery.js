@@ -84,7 +84,7 @@ exports.updateGalleryImage = async (req, res) => {
             })
         }
         else{
-            await deleteImageFromCloudinary(gallery?.image);
+            await deleteImageFromCloudinary(isGallery?.image);
             let image= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
             image= image?.secure_url;
 
@@ -147,7 +147,7 @@ exports.deleteGalleryImage= async (req,res)=>{
                 message:"Gallery data not found"
             })
         }
-        await deleteImageFromCloudinary(isBlog?.thumbnail);
+        await deleteImageFromCloudinary(isGallery?.image);
         await gallery.findByIdAndDelete({_id:id});
 
         return res.status(200).json({
