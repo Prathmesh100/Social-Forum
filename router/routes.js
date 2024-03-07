@@ -12,7 +12,9 @@ const {createQuiz,updateQuiz,deleteQuiz,getAllQuizes,getQuiz} = require("../cont
 const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog,createDummyBlog}= require("../controllers/Blogs");
 const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth");
 const { imageUpload, imageRemover } = require("../controllers/ImageUploader");
-
+const {createAnnouncement,updateAnnouncement,getAllAnnouncements,deleteAnnouncement} = require("../controllers/Announcement");
+const {createGalleryImage,updateGalleryImage,getAllGalleryImage,deleteGalleryImage}= require("../controllers/Gallery");
+const {createCarouselImage,updateCarouselImage,deleteCarouselImage,getAllCarouselImage} = require("../controllers/Carousel")
 
 // ********************************************************************************************************
 //                                      Authentication routes
@@ -85,5 +87,34 @@ router.post("/createDummyBlog", createDummyBlog);
 router.post("/uploadBlogImage",auth,isDemo, imageUpload);
 router.post("/removeBlogImage",auth,isDemo, imageRemover);
 
+// ********************************************************************************************************
+//                                      Announcement routes
+// ********************************************************************************************************
+
+// Routes for managing announcements
+router.post('/createAnnouncement',auth,isDemo,createAnnouncement);
+router.put('/updateAnnouncement/:id',auth,isDemo,updateAnnouncement);
+router.get('/getAllannouncements', getAllAnnouncements);
+router.delete('/deleteAnnouncement/:id', auth,isDemo,deleteAnnouncement);
+
+// ********************************************************************************************************
+//                                      Gallery routes
+// ********************************************************************************************************
+
+// Routes for managing gallery
+router.post('createGalleryImage', auth, isDemo, createGalleryImage);
+router.put('/updateGalleryImage/:id', auth, isDemo, updateGalleryImage);
+router.get('/getAllGalleryImages', getAllGalleryImage);
+router.delete('/deleteGalleryImage/:id', auth, isDemo, deleteGalleryImage);
+
+// ********************************************************************************************************
+//                                      Carousel routes
+// ********************************************************************************************************
+
+// Routes for managing carousel images
+router.post('/createCarouselImage', auth, isDemo, createCarouselImage);
+router.put('/updateCarouselImage/:id', auth, isDemo, updateCarouselImage);
+router.get('/getAllCarouselImages', getAllCarouselImage);
+router.delete('/deleteCarouselImage/:id', auth, isDemo, deleteCarouselImage);
 
 module.exports = router; 
