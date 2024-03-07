@@ -1,5 +1,5 @@
 const gallery = require("../models/Gallery");
-const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const { uploadImageToCloudinary,deleteImageFromCloudinary } = require("../utils/imageUploader");
 require("dotenv").config();
 
 // Function to create a new gallery images
