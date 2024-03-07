@@ -73,7 +73,7 @@ exports.updateCarouselImage = async (req, res) => {
             let newImage= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
             newImage= newImage?.secure_url;
 
-            const updatedCarousel = await gallery.findByIdAndUpdate({_id:id},{
+            const updatedCarousel = await carousel.findByIdAndUpdate({_id:id},{
                 image:newImage
             },{ new: true })
 
