@@ -32,7 +32,7 @@ exports.createGalleryImage = async (req, res) => {
 		// Create a new PastEvent with the given details
 		const newGalleryImage = await gallery.create({
 			title,
-			Image: galleryImage.secure_url,
+			image: galleryImage.secure_url,
 		});
 
 		// Return the response
