@@ -35,8 +35,8 @@ exports.createAnnouncement = async (req,res)=>{
 
 exports.updateAnnouncement = async(req, res) => {
     try{
+        const {title, description} = req.body;
         const {id} = req.params;
-        const {title, description} = res.body;
         if(!id){
             return res.status(400).json({
                 success: false,
