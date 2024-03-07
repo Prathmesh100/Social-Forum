@@ -70,7 +70,7 @@ exports.updateCarouselImage = async (req, res) => {
             })
         }
             await deleteImageFromCloudinary(isCarousel?.image);
-            let newImage= await uploadImageToCloudinary(files.thumbnail,process.env.FOLDER_NAME);
+            let newImage= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
             newImage= newImage?.secure_url;
 
             const updatedCarousel = await gallery.findByIdAndUpdate({_id:id},{

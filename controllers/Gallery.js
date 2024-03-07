@@ -85,7 +85,7 @@ exports.updateGalleryImage = async (req, res) => {
         }
         else{
             await deleteImageFromCloudinary(gallery?.image);
-            let image= await uploadImageToCloudinary(files.thumbnail,process.env.FOLDER_NAME);
+            let image= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
             image= image?.secure_url;
 
             const updatedGallery = await gallery.findByIdAndUpdate({_id:id},{
