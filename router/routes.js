@@ -12,7 +12,7 @@ const {createQuiz,updateQuiz,deleteQuiz,getAllQuizes,getQuiz} = require("../cont
 const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog,createDummyBlog}= require("../controllers/Blogs");
 const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth");
 const { imageUpload, imageRemover } = require("../controllers/ImageUploader");
-const {createAnnouncement,updateAnnouncement,getAllAnnouncements,deleteAnnouncement} = require("../controllers/Announcement");
+const {createAnnouncement,updateAnnouncement,getAllAnnouncements,getAnnouncement,deleteAnnouncement} = require("../controllers/Announcement");
 const {createGalleryImage,updateGalleryImage,getAllGalleryImage,deleteGalleryImage}= require("../controllers/Gallery");
 const {createCarouselImage,updateCarouselImage,deleteCarouselImage,getAllCarouselImage} = require("../controllers/Carousel")
 
@@ -95,6 +95,7 @@ router.post("/removeBlogImage",auth,isDemo, imageRemover);
 router.post('/createAnnouncement',auth,isDemo,createAnnouncement);
 router.put('/updateAnnouncement/:id',auth,isDemo,updateAnnouncement);
 router.get('/getAllannouncements', getAllAnnouncements);
+router.get('/getAnnouncement/:id',getAnnouncement);
 router.delete('/deleteAnnouncement/:id', auth,isDemo,deleteAnnouncement);
 
 // ********************************************************************************************************
