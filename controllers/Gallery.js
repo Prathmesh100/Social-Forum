@@ -190,7 +190,7 @@ exports.deleteGalleryImage= async (req,res)=>{
                 message:"Gallery data not found"
             })
         }
-        await deleteImageFromCloudinary(isGallery?.images);
+        // await deleteImageFromCloudinary(isGallery?.images);
         await gallery.findByIdAndDelete({_id:id});
 
         return res.status(200).json({
