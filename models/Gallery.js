@@ -7,8 +7,8 @@ const gallerySchema = new mongoose.Schema(
             type: String,
             required: true
           },
-          image:{
-            type: String,
+          images: {
+            type: [String],
             required: true
           },
 		// Add timestamps for when the document is created and last modified

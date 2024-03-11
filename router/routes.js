@@ -13,7 +13,7 @@ const {createBlog,updateBlog,deleteBlog,getAllBlogs, getBlog,createDummyBlog}= r
 const {signup,login,changePassword,getUserDetails,updateUserDetails,getAllUserDetails,deleteUser,approveUser} = require("../controllers/Auth");
 const { imageUpload, imageRemover } = require("../controllers/ImageUploader");
 const {createAnnouncement,updateAnnouncement,getAllAnnouncements,getAnnouncement,deleteAnnouncement} = require("../controllers/Announcement");
-const {createGalleryImage,updateGalleryImage,getAllGalleryImage,deleteGalleryImage}= require("../controllers/Gallery");
+const {createGalleryImage,updateGalleryImage,getAllGalleryImage,deleteGalleryImage,getGallery}= require("../controllers/Gallery");
 const {createCarouselImage,updateCarouselImage,deleteCarouselImage,getAllCarouselImage} = require("../controllers/Carousel")
 
 // ********************************************************************************************************
@@ -107,7 +107,7 @@ router.post('/createGalleryImage', auth, isDemo, createGalleryImage);
 router.put('/updateGalleryImage/:id', auth, isDemo, updateGalleryImage);
 router.get('/getAllGalleryImages', getAllGalleryImage);
 router.delete('/deleteGalleryImage/:id', auth, isDemo, deleteGalleryImage);
-
+router.get('/getGalleryImage/:id',getGallery)
 // ********************************************************************************************************
 //                                      Carousel routes
 // ********************************************************************************************************

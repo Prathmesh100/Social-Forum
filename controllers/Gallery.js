@@ -7,12 +7,12 @@ exports.createGalleryImage = async (req, res) => {
 	try {
 		let {title} = req.body;
 		// Get image from request files
-		const image = req.files.galleryImage;
-		console.log(image);
+        let files = req.files; // Assuming files are uploaded in 'images' field
+		console.log(files);
 		// Check if any of the required fields are missing
 		if (
 			!title ||
-            !image
+            !files.images
 		) {
 			return res.status(400).json({
 				success: false,
@@ -21,25 +21,41 @@ exports.createGalleryImage = async (req, res) => {
 		}
 		console.log("required done");
 
-		// Upload the Image to Cloudinary
-		const galleryImage = await uploadImageToCloudinary(
-			image,
-			process.env.FOLDER_NAME
-		);
+		let uploadedImages=[];
+        if(files.images.length > 1)
+        {
+            uploadedImages = await Promise.all(files.images.map(async (file) => {
+                try {
+                    const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
+                    return imageUrl.secure_url;
+                } catch (error) {
+                    console.error("Error uploading image to Cloudinary:", error);
+                    throw new Error("Failed to upload image to Cloudinary");
+                }
+            }));
+        }
+        else 
+        {
+            const temp= await uploadImageToCloudinary(
+                files.images,
+                process.env.FOLDER_NAME
+            );
+            uploadedImages=temp?.secure_url;
+        }
 		console.log(" Image upload done");
 
 		console.log(galleryImage);
 		// Create a new PastEvent with the given details
 		const newGalleryImage = await gallery.create({
 			title,
-			image: galleryImage.secure_url,
+			images: uploadedImages,
 		});
 
 		// Return the response
 		res.status(200).json({
 			success: true,
 			data: newGalleryImage,
-			message: "Image inserted in DB Successfully",
+			message: "Gallery created successfully",
 		});
 	} catch (error) {
 		// Handle any errors that occur during the creation of gallery image
@@ -56,7 +72,7 @@ exports.updateGalleryImage = async (req, res) => {
     try{
         const {id} = req.params;
         const {title} = req.body;
-        const image = req.files.galleryImage;
+        let files = req.files; // Assuming files are uploaded in 'images' field
         if(!id)
         {
             return res.status(400).json({
@@ -72,7 +88,7 @@ exports.updateGalleryImage = async (req, res) => {
                 message:"Gallery data not found"
             })
         }
-        if(!image){
+        if(!files){
             const updatedGallery = await gallery.findByIdAndUpdate({_id:id},{
                 title:title || isGallery?.title,
             },{ new: true })
@@ -84,13 +100,40 @@ exports.updateGalleryImage = async (req, res) => {
             })
         }
         else{
-            await deleteImageFromCloudinary(isGallery?.image);
-            let newImage= await uploadImageToCloudinary(image,process.env.FOLDER_NAME);
-            newImage= newImage?.secure_url;
+            { await Promise.all(isGallery.images.map(async (earlierImage) => {
+                try {
+                    await deleteImageFromCloudinary(earlierImage);
+                } catch (error) {
+                    console.error("Error deleting earlier uploaded image from Cloudinary:", error);
+                }
+                }));
+            }
 
+            let uploadedImages=[];
+            if(files.images.length > 1)
+            {
+                uploadedImages = await Promise.all(files.images.map(async (file) => {
+                    try {
+                        const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
+                        return imageUrl.secure_url;
+                    } catch (error) {
+                        console.error("Error uploading image to Cloudinary:", error);
+                        throw new Error("Failed to upload image to Cloudinary");
+                    }
+                }));
+            }
+            else 
+            {
+                const temp= await uploadImageToCloudinary(
+                    files.images,
+                    process.env.FOLDER_NAME
+                );
+                uploadedImages=temp?.secure_url;
+            }
+		console.log(" Image upload done");
             const updatedGallery = await gallery.findByIdAndUpdate({_id:id},{
                 title:title || isGallery?.title,
-                image:newImage
+                image:uploadedImages || isGallery.images,
             },{ new: true })
 
             return res.status(200).json({
@@ -162,5 +205,36 @@ exports.deleteGalleryImage= async (req,res)=>{
 			message: "Failed to delete data in DB",
 			error: error.message,
 		});
+    }
+}
+
+exports.getGallery = async (req,res)=>{
+    try{
+        const { id } = req.params; // Extract the ID from request parameters
+        if (!id) {
+            return res.status(404).json({
+                success: false,
+                message: "Gallery Id is required",
+            });
+        }
+        const isGallery = await gallery.findById(id); // Use findById to find blog by ID
+        if (!isGallery) {
+            return res.status(404).json({
+                success: false,
+                message: "Gallery not found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            data: isGallery,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Can't Fetch Gallery Data",
+            error: error.message,
+        });
     }
 }
