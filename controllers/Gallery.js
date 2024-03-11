@@ -44,7 +44,7 @@ exports.createGalleryImage = async (req, res) => {
         }
 		console.log(" Image upload done");
 
-		console.log(galleryImage);
+		// console.log(galleryImage);
 		// Create a new PastEvent with the given details
 		const newGalleryImage = await gallery.create({
 			title,
