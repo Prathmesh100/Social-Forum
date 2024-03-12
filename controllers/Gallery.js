@@ -116,7 +116,7 @@ exports.updateGalleryImage = async (req, res) => {
                 uploadedImages = await Promise.all(files.images.map(async (file) => {
                     try {
                         const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
-                        console.log(imageUrl.secure_url);
+                        console.log(imageUrl.secure_url)
                         return imageUrl.secure_url;
                     } catch (error) {
                         console.error("Error uploading image to Cloudinary:", error);
@@ -133,10 +133,11 @@ exports.updateGalleryImage = async (req, res) => {
                 uploadedImages=temp?.secure_url;
                 console.log(uploadedImages);
             }
+            console.log(uploadedImages);
 		console.log(" Image upload done");
             const updatedGallery = await gallery.findByIdAndUpdate({_id:id},{
                 title:title || isGallery?.title,
-                image:uploadedImages || isGallery.images,
+                images:uploadedImages || isGallery.images,
             },{ new: true })
 
             return res.status(200).json({
