@@ -103,18 +103,20 @@ exports.updateGalleryImage = async (req, res) => {
             { await Promise.all(isGallery.images.map(async (earlierImage) => {
                 try {
                     await deleteImageFromCloudinary(earlierImage);
+                    console.log("Image deleted successfully");
                 } catch (error) {
                     console.error("Error deleting earlier uploaded image from Cloudinary:", error);
                 }
                 }));
             }
 
-            let uploadedImages=[];
+            let uploadedImages=isGallery.images;
             if(files.images.length > 1)
             {
                 uploadedImages = await Promise.all(files.images.map(async (file) => {
                     try {
                         const imageUrl = await uploadImageToCloudinary(file, process.env.FOLDER_NAME);
+                        console.log(imageUrl.secure_url);
                         return imageUrl.secure_url;
                     } catch (error) {
                         console.error("Error uploading image to Cloudinary:", error);
@@ -129,6 +131,7 @@ exports.updateGalleryImage = async (req, res) => {
                     process.env.FOLDER_NAME
                 );
                 uploadedImages=temp?.secure_url;
+                console.log(uploadedImages);
             }
 		console.log(" Image upload done");
             const updatedGallery = await gallery.findByIdAndUpdate({_id:id},{
