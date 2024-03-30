@@ -42,6 +42,12 @@ const userSchema = new mongoose.Schema(
 		approved:{
 			type: Boolean,
 			required: true,
+		},
+		loginTime:{
+			type:Number
+		},
+		tokenExpiryTime:{
+			type:Number
 		}
 		// Add timestamps for when the document is created and last modified
 	},
